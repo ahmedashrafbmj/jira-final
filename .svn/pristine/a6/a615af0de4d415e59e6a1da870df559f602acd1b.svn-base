@@ -1,0 +1,74 @@
+.projectTitle{
+        display: "flex";
+        flex-direction: row;
+        gap: 100px;
+}
+.titleDiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between
+}
+.imageAvatar{
+    width: "28px";
+    height:28px ;
+    border-radius:40% ;
+    margin-top: 15px;
+}
+.TitleavatarDiv{
+    display: flex;
+    flex-direction: row;   
+}
+.UnAssignedimageAvatar{
+    width: "30px";
+    height:30px ;
+   font-size: 20px;
+    margin-top: 13px;
+}
+.cardlayout{
+    gap: "5px";
+    
+}
+.projectName{
+    font-style: inherit;
+    line-height: 1.14286;
+    align-items: flex-start;
+    margin-top: 0%;
+    display: flex;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ds-text-subtlest,#5E6C84);
+    letter-spacing: normal;
+    font-size: 12px;
+    margin-left: var(--ds-space-100,8px);
+    margin-right: var(--ds-space-100,8px);
+    overflow: hidden;
+    /* background-color: rgb(232, 236, 243);  */
+    &:hover {
+        border: 1px solid #ccc;
+      background-color: rgb(232, 236, 243); 
+    }
+}
+
+.custom-card {
+    margin: 0;
+    padding: 0;
+    /* display: flex;
+    flex-direction: row; */
+    /* gap: 5px; */
+    margin-bottom: 10px;
+    background-color: hsl(220, 16%, 96%);
+    /* display: flex;
+    flex-direction:column; */
+    height: 85vh; 
+    width: 100%;
+  
+    
+  }
+
+  .HoverCard {
+    transition: background-color 0.3s ease; 
+    &:hover {
+        border: 1px solid #ccc;
+      background-color: rgb(232, 236, 243); 
+    }
+  }

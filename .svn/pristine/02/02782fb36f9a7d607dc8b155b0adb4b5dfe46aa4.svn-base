@@ -1,0 +1,1787 @@
+import React, { useEffect, useState } from "react";
+import "./card.css";
+import { styled } from "@mui/system";
+import { Tooltip, CircularProgress } from "@mui/material";
+//import CircularProgress from '@mui/material/CircularProgress';
+import { Avatar, Card } from "antd";
+import {
+  UserOutlined,
+  MenuOutlined,
+  DownOutlined,
+  UpOutlined,
+  CalendarOutlined,
+} from "@ant-design/icons";
+import bugIcon from "../images/bugIcon.PNG";
+import taskIcon from "../images/taskIcon.PNG";
+import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
+import { clearSearchValue, filterSearch } from "../Redux/store/slice.js";
+function FixedCards(Fixeditem) {
+  console.log(Fixeditem, "FixeditemFixeditem");
+  const value = useSelector((state) => state?.searchedText?.value);
+  // const serachLoader = useSelector(
+  //   (state) => state?.searchedText?.serachLoader
+  // );
+  const JiraURL = "https://proprint.atlassian.net/jira/software/projects";
+  const jiraRoute = (item) => {
+    //setIsClicked(true);
+    const projectURL = item?.fields?.project.name
+      ? `${JiraURL}/${item.fields.project.name.toLowerCase()}/issues`
+      : "";
+    if (projectURL) {
+      window.open(projectURL);
+    }
+  };
+  const bugIssues = Fixeditem?.Fixeditem?.issues?.filter(
+    (item) => item.fields.issuetype.name === "Bug"
+  );
+  const taskIssues = Fixeditem?.Fixeditem?.issues?.filter(
+    (item) => item.fields.issuetype.name === "Task"
+  );
+  const assigneIssues = Fixeditem?.Fixeditem?.issues?.filter(
+    (item) => item.fields.issuetype.name === "Assigne"
+  );
+  const subTasksIssues = Fixeditem?.Fixeditem?.issues?.filter(
+    (item) => item.fields.issuetype.name === "SubTasks"
+  );
+  const statusInDone = Fixeditem?.Fixeditem?.issues?.filter(
+    (item) => item.fields.status.name === "Done"
+  );
+  const statusInPROGRESS = Fixeditem?.Fixeditem?.issues?.filter((item) => {
+    return item.fields.status.name === "PROGRESS";
+  });
+  const statusREVIEW = Fixeditem?.Fixeditem?.issues?.filter(
+    (item) => item.fields.status.name === "REVIEW"
+  );
+  // const statusTesting = Fixeditem?.Fixeditem?.issues?.filter(
+  //   (item) => item.fields.status.name === "Testing"
+  // );
+  const status = localStorage.getItem("status");
+  // const groupValue = localStorage.getItem("group");
+  // console.log(groupValue,"groupValueeee");
+  return (
+    <>
+      <div className="fixed-container">
+        {localStorage.getItem("group") === "All" || status === "Alll"
+          ? Fixeditem?.Fixeditem?.issues?.map((item, index) => {
+              const shouldHighlight = value && item?.key?.includes(value);
+              //setSearchState(shouldHighlight);
+              return (
+                <Card
+                  key={index}
+                  onClick={() => jiraRoute(item)}
+                  className="HoverCard"
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    marginLeft: "0px",
+                    minHeight: "120px", // Set a minimum height for the card
+                    //overflow: "hidden",
+                    // display: "flex",
+                    // flexDirection: "column", // Vertical flex direction
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      //   position: "fixed",
+                      //    left: "955px",
+                      //  top: "257px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                        flex: 1, // Make this div take up remaining space
+                      }}
+                    >
+                      <a
+                        href={
+                          item?.fields?.project.name
+                            ? `${JiraURL}/${item.fields.project.name.toLowerCase()}/issues`
+                            : ""
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p
+                          //className="description"
+                          style={{
+                            //overflow: "hidden",
+                            //textOverflow: "ellipsis",
+                            //whiteSpace: "nowrap",
+                            maxHeight: "50px",
+                            cursor: "pointer",
+                            marginTop: "-10px",
+                            color: "#001529",
+                            transition: "color 0.3s", // Add a smooth transition for color change
+                            //overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            //whiteSpace: "wrap",
+                          }}
+                          // Apply hover styles using :hover pseudo-class
+                          onMouseEnter={(e) => (e.target.style.color = "blue")}
+                          onMouseLeave={(e) =>
+                            (e.target.style.color = "#001529")
+                          }
+                        >
+                          {item?.fields?.summary}
+                        </p>
+                      </a>
+                    </div>
+
+                    <div>
+                      {item?.fields?.customfield_10044 ||
+                      item?.fields?.customfield_10045 ||
+                      item?.fields?.customfield_10048
+                        ? " " +
+                          (item?.fields.customfield_10044 ||
+                            item?.fields.customfield_10048 ||
+                            item?.fields.customfield_10045)
+                        : 0}
+                    </div>
+                  </div>
+                  {/* <div style={{ display: "flex", flexDirection: "row" }}> */}
+              
+      <div
+            style={{ 
+              display: "flex",
+               flexDirection: "row",
+               color:"#DE350B",
+               width: "70px", 
+               gap: "1px",
+               textTransform: "uppercase", 
+               fontWeight: "bold"
+               }}>
+                  {item?.fields?.duedate && (
+          <div style={{ border: "1px solid #DE350B" }}>
+              <CalendarOutlined style={{ marginLeft: "2px"}} />
+            
+              {moment(item.fields.duedate).format("DD MMM")}
+            
+          </div>
+                  )}     
+      </div> 
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "flex-end", // Align items to the end of the container
+                      minHeight: "45px", // Set a minimum height for the card
+                      // position: "fixed",
+                      //  left: "758px",
+                      //  top: "260px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "3px",
+                      }}
+                    >
+                      {item.fields.issuetype.name === "Task" ? (
+                        <>
+                          <img
+                            src={taskIcon}
+                            alt="Task Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            src={bugIcon}
+                            alt="Bug Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "3px",
+                          marginTop:"-10px"
+                        }}
+                      >
+                        <div>
+                          <Tooltip title="Medium">
+                            {item?.fields?.priority?.name === "Medium" && (
+                              <span>
+                                <MenuOutlined style={{ color: "#FFAB00" }} />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="Low">
+                            {item?.fields?.priority?.name === "Low" && (
+                              <span>
+                                <DownOutlined
+                                  style={{ color: "rgb(0, 101, 255)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="High">
+                            {item?.fields?.priority?.name === "High" && (
+                              <span>
+                                <UpOutlined
+                                  style={{ color: "rgb(255, 86, 48)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          {!["Medium", "Low", "High"].includes(
+                            item?.fields?.priority?.name
+                          ) && (
+                            <Tooltip title="Medium">
+                              {item?.fields?.priority?.name === "Medium" && (
+                                <span>
+                                  <MenuOutlined style={{ color: "#FFAB00" }} />
+                                </span>
+                              )}
+                            </Tooltip>
+                          )}
+                        </div>
+                        <div className="Titleavatar">
+                          <Tooltip
+                            title={`Assignee: ${
+                              Fixeditem?.Fixeditem?.assignee || "Unassigned"
+                            }`}
+                          >
+                            {item?.fields?.assignee?.avatarUrls?.["48x48"] ? (
+                              <img
+                                src={
+                                  item?.fields?.assignee?.avatarUrls?.["48x48"]
+                                }
+                                alt="Avatar"
+                                className="imageAvatar"
+                              />
+                            ) : (
+                              <Avatar
+                                //className="imageAvatar"
+                                className="UnAssignedimageAvatar"
+                                icon={<UserOutlined />}
+                              />
+                            )}
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </Card>
+              );
+            })
+          : localStorage.getItem("group") === "Bug"
+          ? bugIssues?.map((item, index) => {
+              const shouldHighlight = value && item?.key?.includes(value);
+              // console.log(shouldHighlight, "shouldHighlight");
+              return (
+                <Card
+                  key={index}
+                  onClick={() => jiraRoute(item)}
+                  //className="HoverCard"
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    marginLeft: "0px",
+                    minHeight: "120px",
+                  }}
+                  // className={`HoverCard ${
+                  //   shouldHighlight ? "highlighted" : ""
+                  // }`}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                        flex: 1, // Make this div take up remaining space
+                      }}
+                    >
+                      <a
+                        href={
+                          item?.fields?.project.name
+                            ? `${JiraURL}/${item.fields.project.name.toLowerCase()}/issues`
+                            : ""
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p
+                          className="description"
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "130px",
+                            cursor: "pointer",
+                            margin: 0, // Remove default margin
+                          }}
+                        >
+                          {item?.fields?.summary}
+                        </p>
+                      </a>
+                    </div>
+                    <div style={{ marginTop: "-10px" }}>
+                      {item?.fields?.customfield_10044 ||
+                      item?.fields?.customfield_10045 ||
+                      item?.fields?.customfield_10048
+                        ? " " +
+                          (item?.fields.customfield_10044 ||
+                            item?.fields.customfield_10048 ||
+                            item?.fields.customfield_10045)
+                        : 0}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <CalendarOutlined style={{ marginLeft: "2px" }} />
+                    {item?.fields?.duedate ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>
+                          {moment(item.fields.duedate).format("DD MMM")}
+                        </span>
+                      </div>
+                    ) : (
+                      <div style={{ display: "block" }}> </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "3px",
+                      }}
+                    >
+                      {item.fields.issuetype.name === "Task" ? (
+                        <>
+                          <img
+                            src={taskIcon}
+                            alt="Task Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            src={bugIcon}
+                            alt="Bug Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {/* <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked />}
+                    label={<span>{item?.key}</span>}
+                  />
+                </FormGroup> */}
+                    <span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "3px",
+                          marginTop: "-10px",
+                          //alignItems: "flex-end",
+                        }}
+                      >
+                        <div style={{ marginTop: "8px" }}>
+                          <Tooltip title="Medium">
+                            {item?.fields?.priority?.name === "Medium" && (
+                              <span>
+                                <MenuOutlined style={{ color: "#FFAB00" }} />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="Low">
+                            {item?.fields?.priority?.name === "Low" && (
+                              <span>
+                                <DownOutlined
+                                  style={{ color: "rgb(0, 101, 255)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="High">
+                            {item?.fields?.priority?.name === "High" && (
+                              <span>
+                                <UpOutlined
+                                  style={{ color: "rgb(255, 86, 48)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          {!["Medium", "Low", "High"].includes(
+                            item?.fields?.priority?.name
+                          ) && (
+                            <Tooltip title="Medium">
+                              {item?.fields?.priority?.name === "Medium" && (
+                                <span>
+                                  <MenuOutlined style={{ color: "#FFAB00" }} />
+                                </span>
+                              )}
+                            </Tooltip>
+                          )}
+                        </div>
+                        <div className="Titleavatar">
+                          <Tooltip
+                            title={`Assignee: ${
+                              Fixeditem?.Fixeditem?.assignee || "Unassigned"
+                            }`}
+                          >
+                            {item?.fields?.assignee?.avatarUrls?.["48x48"] ? (
+                              <img
+                                src={
+                                  item?.fields?.assignee?.avatarUrls?.["48x48"]
+                                }
+                                alt="Avatar"
+                                className="imageAvatar"
+                              />
+                            ) : (
+                              <Avatar
+                                //className="imageAvatar"
+                                className="UnAssignedimageAvatar"
+                                icon={<UserOutlined />}
+                              />
+                            )}
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </Card>
+              );
+            })
+          : localStorage.getItem("group") === "Task"
+          ? taskIssues?.map((item, index) => {
+              const shouldHighlight = value && item?.key?.includes(value);
+              // console.log(shouldHighlight, "shouldHighlight");
+              return (
+                <Card
+                  key={index}
+                  onClick={() => jiraRoute(item)}
+                  //className="HoverCard"
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    marginLeft: "0px",
+                    height: "120px",
+                  }}
+                  // className={`HoverCard ${
+                  //   shouldHighlight ? "highlighted" : ""
+                  // }`}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                      }}
+                    >
+                      <a
+                        href={
+                          item?.fields?.project.name
+                            ? `${JiraURL}/${item.fields.project.name.toLowerCase()}/issues`
+                            : ""
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p
+                          className="description"
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "130px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {item?.fields?.summary}
+                        </p>
+                      </a>
+                    </div>
+                    <div style={{ marginTop: "-10px" }}>
+                      {item?.fields?.customfield_10044 ||
+                      item?.fields?.customfield_10045 ||
+                      item?.fields?.customfield_10048
+                        ? " " +
+                          (item?.fields.customfield_10044 ||
+                            item?.fields.customfield_10048 ||
+                            item?.fields.customfield_10045)
+                        : 0}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <CalendarOutlined style={{ marginLeft: "2px" }} />
+                    {item?.fields?.duedate ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>
+                          {moment(item.fields.duedate).format("DD MMM")}
+                        </span>
+                      </div>
+                    ) : (
+                      <div style={{ display: "block" }}> </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "3px",
+                      }}
+                    >
+                      {item.fields.issuetype.name === "Task" ? (
+                        <>
+                          <img
+                            src={taskIcon}
+                            alt="Task Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            src={bugIcon}
+                            alt="Bug Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {/* <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked />}
+                    label={<span>{item?.key}</span>}
+                  />
+                </FormGroup> */}
+                    <span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "3px",
+                          marginTop: "-10px",
+                        }}
+                      >
+                        <div style={{ marginTop: "8px" }}>
+                          <Tooltip title="Medium">
+                            {item?.fields?.priority?.name === "Medium" && (
+                              <span>
+                                <MenuOutlined style={{ color: "#FFAB00" }} />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="Low">
+                            {item?.fields?.priority?.name === "Low" && (
+                              <span>
+                                <DownOutlined
+                                  style={{ color: "rgb(0, 101, 255)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="High">
+                            {item?.fields?.priority?.name === "High" && (
+                              <span>
+                                <UpOutlined
+                                  style={{ color: "rgb(255, 86, 48)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          {!["Medium", "Low", "High"].includes(
+                            item?.fields?.priority?.name
+                          ) && (
+                            <Tooltip title="Medium">
+                              {item?.fields?.priority?.name === "Medium" && (
+                                <span>
+                                  <MenuOutlined style={{ color: "#FFAB00" }} />
+                                </span>
+                              )}
+                            </Tooltip>
+                          )}
+                        </div>
+                        <div className="Titleavatar">
+                          <Tooltip
+                            title={`Assignee: ${
+                              Fixeditem?.Fixeditem?.assignee || "Unassigned"
+                            }`}
+                          >
+                            {item?.fields?.assignee?.avatarUrls?.["48x48"] ? (
+                              <img
+                                src={
+                                  item?.fields?.assignee?.avatarUrls?.["48x48"]
+                                }
+                                alt="Avatar"
+                                className="imageAvatar"
+                              />
+                            ) : (
+                              <Avatar
+                                //className="imageAvatar"
+                                className="UnAssignedimageAvatar"
+                                icon={<UserOutlined />}
+                              />
+                            )}
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </Card>
+              );
+            })
+          : localStorage.getItem("group") === "Assigne"
+          ? assigneIssues?.map((item, index) => {
+              const shouldHighlight = value && item?.key?.includes(value);
+              // console.log(shouldHighlight, "shouldHighlight");
+              return (
+                <Card
+                  key={index}
+                  onClick={() => jiraRoute(item)}
+                  //className="HoverCard"
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    marginLeft: "0px",
+                    height: "120px",
+                  }}
+                  // className={`HoverCard ${
+                  //   shouldHighlight ? "highlighted" : ""
+                  // }`}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                      }}
+                    >
+                      <a
+                        href={
+                          item?.fields?.project.name
+                            ? `${JiraURL}/${item.fields.project.name.toLowerCase()}/issues`
+                            : ""
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p
+                          className="description"
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "130px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {item?.fields?.summary}
+                        </p>
+                      </a>
+                    </div>
+                    <div style={{ marginTop: "-10px" }}>
+                      {item?.fields?.customfield_10044 ||
+                      item?.fields?.customfield_10045 ||
+                      item?.fields?.customfield_10048
+                        ? " " +
+                          (item?.fields.customfield_10044 ||
+                            item?.fields.customfield_10048 ||
+                            item?.fields.customfield_10045)
+                        : 0}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <CalendarOutlined style={{ marginLeft: "2px" }} />
+                    {item?.fields?.duedate ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>
+                          {moment(item.fields.duedate).format("DD MMM")}
+                        </span>
+                      </div>
+                    ) : (
+                      <div style={{ display: "block" }}> </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "3px",
+                      }}
+                    >
+                      {item.fields.issuetype.name === "Task" ? (
+                        <>
+                          <img
+                            src={taskIcon}
+                            alt="Task Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            src={bugIcon}
+                            alt="Bug Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {/* <FormGroup>
+                    <FormControlLabel
+                      control={<Checkbox defaultChecked />}
+                      label={<span>{item?.key}</span>}
+                    />
+                  </FormGroup> */}
+                    <span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "3px",
+                          marginTop: "-10px",
+                        }}
+                      >
+                        <div style={{ marginTop: "8px" }}>
+                          <Tooltip title="Medium">
+                            {item?.fields?.priority?.name === "Medium" && (
+                              <span>
+                                <MenuOutlined style={{ color: "#FFAB00" }} />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="Low">
+                            {item?.fields?.priority?.name === "Low" && (
+                              <span>
+                                <DownOutlined
+                                  style={{ color: "rgb(0, 101, 255)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="High">
+                            {item?.fields?.priority?.name === "High" && (
+                              <span>
+                                <UpOutlined
+                                  style={{ color: "rgb(255, 86, 48)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          {!["Medium", "Low", "High"].includes(
+                            item?.fields?.priority?.name
+                          ) && (
+                            <Tooltip title="Medium">
+                              {item?.fields?.priority?.name === "Medium" && (
+                                <span>
+                                  <MenuOutlined style={{ color: "#FFAB00" }} />
+                                </span>
+                              )}
+                            </Tooltip>
+                          )}
+                        </div>
+                        <div className="Titleavatar">
+                          <Tooltip
+                            title={`Assignee: ${
+                              Fixeditem?.Fixeditem?.assignee || "Unassigned"
+                            }`}
+                          >
+                            {item?.fields?.assignee?.avatarUrls?.["48x48"] ? (
+                              <img
+                                src={
+                                  item?.fields?.assignee?.avatarUrls?.["48x48"]
+                                }
+                                alt="Avatar"
+                                className="imageAvatar"
+                              />
+                            ) : (
+                              <Avatar
+                                //className="imageAvatar"
+                                className="UnAssignedimageAvatar"
+                                icon={<UserOutlined />}
+                              />
+                            )}
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </Card>
+              );
+            })
+          : localStorage.getItem("group") === "SubTasks"
+          ? subTasksIssues?.map((item, index) => {
+              const shouldHighlight = value && item?.key?.includes(value);
+              // console.log(shouldHighlight, "shouldHighlight");
+              return (
+                <Card
+                  key={index}
+                  onClick={() => jiraRoute(item)}
+                  //className="HoverCard"
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    marginLeft: "0px",
+                    height: "120px",
+                  }}
+                  // className={`HoverCard ${
+                  //   shouldHighlight ? "highlighted" : ""
+                  // }`}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                      }}
+                    >
+                      <a
+                        href={
+                          item?.fields?.project.name
+                            ? `${JiraURL}/${item.fields.project.name.toLowerCase()}/issues`
+                            : ""
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p
+                          className="description"
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "130px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {item?.fields?.summary}
+                        </p>
+                      </a>
+                    </div>
+                    <div style={{ marginTop: "-10px" }}>
+                      {item?.fields?.customfield_10044 ||
+                      item?.fields?.customfield_10045 ||
+                      item?.fields?.customfield_10048
+                        ? " " +
+                          (item?.fields.customfield_10044 ||
+                            item?.fields.customfield_10048 ||
+                            item?.fields.customfield_10045)
+                        : 0}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <CalendarOutlined style={{ marginLeft: "2px" }} />
+                    {item?.fields?.duedate ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>
+                          {moment(item.fields.duedate).format("DD MMM")}
+                        </span>
+                      </div>
+                    ) : (
+                      <div style={{ display: "block" }}> </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "3px",
+                      }}
+                    >
+                      {item.fields.issuetype.name === "Task" ? (
+                        <>
+                          <img
+                            src={taskIcon}
+                            alt="Task Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            src={bugIcon}
+                            alt="Bug Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {/* <FormGroup>
+                      <FormControlLabel
+                        control={<Checkbox defaultChecked />}
+                        label={<span>{item?.key}</span>}
+                      />
+                    </FormGroup> */}
+                    <span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "3px",
+                          marginTop: "-10px",
+                        }}
+                      >
+                        <div style={{ marginTop: "8px" }}>
+                          <Tooltip title="Medium">
+                            {item?.fields?.priority?.name === "Medium" && (
+                              <span>
+                                <MenuOutlined style={{ color: "#FFAB00" }} />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="Low">
+                            {item?.fields?.priority?.name === "Low" && (
+                              <span>
+                                <DownOutlined
+                                  style={{ color: "rgb(0, 101, 255)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="High">
+                            {item?.fields?.priority?.name === "High" && (
+                              <span>
+                                <UpOutlined
+                                  style={{ color: "rgb(255, 86, 48)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          {!["Medium", "Low", "High"].includes(
+                            item?.fields?.priority?.name
+                          ) && (
+                            <Tooltip title="Medium">
+                              {item?.fields?.priority?.name === "Medium" && (
+                                <span>
+                                  <MenuOutlined style={{ color: "#FFAB00" }} />
+                                </span>
+                              )}
+                            </Tooltip>
+                          )}
+                        </div>
+                        <div className="Titleavatar">
+                          <Tooltip
+                            title={`Assignee: ${
+                              Fixeditem?.Fixeditem?.assignee || "Unassigned"
+                            }`}
+                          >
+                            {item?.fields?.assignee?.avatarUrls?.["48x48"] ? (
+                              <img
+                                src={
+                                  item?.fields?.assignee?.avatarUrls?.["48x48"]
+                                }
+                                alt="Avatar"
+                                className="imageAvatar"
+                              />
+                            ) : (
+                              <Avatar
+                                //className="imageAvatar"
+                                className="UnAssignedimageAvatar"
+                                icon={<UserOutlined />}
+                              />
+                            )}
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </Card>
+              );
+            })
+          : status === "Done"
+          ? statusInDone?.map((item, index) => {
+              const shouldHighlight = value && item?.key?.includes(value);
+              // console.log(shouldHighlight, "shouldHighlight");
+              return (
+                <Card
+                  key={index}
+                  onClick={() => jiraRoute(item)}
+                  //className="HoverCard"
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    marginLeft: "0px",
+                    height: "120px",
+                  }}
+                  // className={`HoverCard ${
+                  //   shouldHighlight ? "highlighted" : ""
+                  // }`}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                      }}
+                    >
+                      <a
+                        href={
+                          item?.fields?.project.name
+                            ? `${JiraURL}/${item.fields.project.name.toLowerCase()}/issues`
+                            : ""
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p
+                          className="description"
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "130px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {item?.fields?.summary}
+                        </p>
+                      </a>
+                    </div>
+                    <div style={{ marginTop: "-10px" }}>
+                      {item?.fields?.customfield_10044 ||
+                      item?.fields?.customfield_10045 ||
+                      item?.fields?.customfield_10048
+                        ? " " +
+                          (item?.fields.customfield_10044 ||
+                            item?.fields.customfield_10048 ||
+                            item?.fields.customfield_10045)
+                        : 0}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <CalendarOutlined style={{ marginLeft: "2px" }} />
+                    {item?.fields?.duedate ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>
+                          {moment(item.fields.duedate).format("DD MMM")}
+                        </span>
+                      </div>
+                    ) : (
+                      <div style={{ display: "block" }}> </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "3px",
+                      }}
+                    >
+                      {item.fields.issuetype.name === "Task" ? (
+                        <>
+                          <img
+                            src={taskIcon}
+                            alt="Task Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            src={bugIcon}
+                            alt="Bug Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {/* <FormGroup>
+                      <FormControlLabel
+                        control={<Checkbox defaultChecked />}
+                        label={<span>{item?.key}</span>}
+                      />
+                    </FormGroup> */}
+                    <span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "3px",
+                          marginTop: "-10px",
+                        }}
+                      >
+                        <div style={{ marginTop: "8px" }}>
+                          <Tooltip title="Medium">
+                            {item?.fields?.priority?.name === "Medium" && (
+                              <span>
+                                <MenuOutlined style={{ color: "#FFAB00" }} />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="Low">
+                            {item?.fields?.priority?.name === "Low" && (
+                              <span>
+                                <DownOutlined
+                                  style={{ color: "rgb(0, 101, 255)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="High">
+                            {item?.fields?.priority?.name === "High" && (
+                              <span>
+                                <UpOutlined
+                                  style={{ color: "rgb(255, 86, 48)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          {!["Medium", "Low", "High"].includes(
+                            item?.fields?.priority?.name
+                          ) && (
+                            <Tooltip title="Medium">
+                              {item?.fields?.priority?.name === "Medium" && (
+                                <span>
+                                  <MenuOutlined style={{ color: "#FFAB00" }} />
+                                </span>
+                              )}
+                            </Tooltip>
+                          )}
+                        </div>
+                        <div className="Titleavatar">
+                          <Tooltip
+                            title={`Assignee: ${
+                              Fixeditem?.Fixeditem?.assignee || "Unassigned"
+                            }`}
+                          >
+                            {item?.fields?.assignee?.avatarUrls?.["48x48"] ? (
+                              <img
+                                src={
+                                  item?.fields?.assignee?.avatarUrls?.["48x48"]
+                                }
+                                alt="Avatar"
+                                className="imageAvatar"
+                              />
+                            ) : (
+                              <Avatar
+                                //className="imageAvatar"
+                                className="UnAssignedimageAvatar"
+                                icon={<UserOutlined />}
+                              />
+                            )}
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </Card>
+              );
+            })
+          : status === "PROGRESS"
+          ? statusInPROGRESS?.map((item, index) => {
+              const shouldHighlight = value && item?.key?.includes(value);
+              // console.log(shouldHighlight, "shouldHighlight");
+              return (
+                <Card
+                  key={index}
+                  onClick={() => jiraRoute(item)}
+                  //className="HoverCard"
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    marginLeft: "0px",
+                    height: "120px",
+                  }}
+                  // className={`HoverCard ${
+                  //   shouldHighlight ? "highlighted" : ""
+                  // }`}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                      }}
+                    >
+                      <a
+                        href={
+                          item?.fields?.project.name
+                            ? `${JiraURL}/${item.fields.project.name.toLowerCase()}/issues`
+                            : ""
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p
+                          className="description"
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "130px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {item?.fields?.summary}
+                        </p>
+                      </a>
+                    </div>
+                    <div style={{ marginTop: "-10px" }}>
+                      {item?.fields?.customfield_10044 ||
+                      item?.fields?.customfield_10045 ||
+                      item?.fields?.customfield_10048
+                        ? " " +
+                          (item?.fields.customfield_10044 ||
+                            item?.fields.customfield_10048 ||
+                            item?.fields.customfield_10045)
+                        : 0}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <CalendarOutlined style={{ marginLeft: "2px" }} />
+                    {item?.fields?.duedate ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>
+                          {moment(item.fields.duedate).format("DD MMM")}
+                        </span>
+                      </div>
+                    ) : (
+                      <div style={{ display: "block" }}> </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "3px",
+                      }}
+                    >
+                      {item.fields.issuetype.name === "Task" ? (
+                        <>
+                          <img
+                            src={taskIcon}
+                            alt="Task Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            src={bugIcon}
+                            alt="Bug Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {/* <FormGroup>
+                        <FormControlLabel
+                          control={<Checkbox defaultChecked />}
+                          label={<span>{item?.key}</span>}
+                        />
+                      </FormGroup> */}
+                    <span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "3px",
+                          marginTop: "-10px",
+                        }}
+                      >
+                        <div style={{ marginTop: "8px" }}>
+                          <Tooltip title="Medium">
+                            {item?.fields?.priority?.name === "Medium" && (
+                              <span>
+                                <MenuOutlined style={{ color: "#FFAB00" }} />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="Low">
+                            {item?.fields?.priority?.name === "Low" && (
+                              <span>
+                                <DownOutlined
+                                  style={{ color: "rgb(0, 101, 255)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="High">
+                            {item?.fields?.priority?.name === "High" && (
+                              <span>
+                                <UpOutlined
+                                  style={{ color: "rgb(255, 86, 48)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          {!["Medium", "Low", "High"].includes(
+                            item?.fields?.priority?.name
+                          ) && (
+                            <Tooltip title="Medium">
+                              {item?.fields?.priority?.name === "Medium" && (
+                                <span>
+                                  <MenuOutlined style={{ color: "#FFAB00" }} />
+                                </span>
+                              )}
+                            </Tooltip>
+                          )}
+                        </div>
+                        <div className="Titleavatar">
+                          <Tooltip
+                            title={`Assignee: ${
+                              Fixeditem?.Fixeditem?.assignee || "Unassigned"
+                            }`}
+                          >
+                            {item?.fields?.assignee?.avatarUrls?.["48x48"] ? (
+                              <img
+                                src={
+                                  item?.fields?.assignee?.avatarUrls?.["48x48"]
+                                }
+                                alt="Avatar"
+                                className="imageAvatar"
+                              />
+                            ) : (
+                              <Avatar
+                                //className="imageAvatar"
+                                className="UnAssignedimageAvatar"
+                                icon={<UserOutlined />}
+                              />
+                            )}
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </Card>
+              );
+            })
+          : status === "REVIEW"
+          ? statusREVIEW?.map((item, index) => {
+              const shouldHighlight = value && item?.key?.includes(value);
+              // console.log(shouldHighlight, "shouldHighlight");
+              return (
+                <Card
+                  key={index}
+                  onClick={() => jiraRoute(item)}
+                  //className="HoverCard"
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    marginLeft: "0px",
+                    height: "120px",
+                  }}
+                  // className={`HoverCard ${
+                  //   shouldHighlight ? "highlighted" : ""
+                  // }`}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                      }}
+                    >
+                      <a
+                        href={
+                          item?.fields?.project.name
+                            ? `${JiraURL}/${item.fields.project.name.toLowerCase()}/issues`
+                            : ""
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <p
+                          className="description"
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "130px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {item?.fields?.summary}
+                        </p>
+                      </a>
+                    </div>
+                    <div style={{ marginTop: "-10px" }}>
+                      {item?.fields?.customfield_10044 ||
+                      item?.fields?.customfield_10045 ||
+                      item?.fields?.customfield_10048
+                        ? " " +
+                          (item?.fields.customfield_10044 ||
+                            item?.fields.customfield_10048 ||
+                            item?.fields.customfield_10045)
+                        : 0}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <CalendarOutlined style={{ marginLeft: "2px" }} />
+                    {item?.fields?.duedate ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>
+                          {moment(item.fields.duedate).format("DD MMM")}
+                        </span>
+                      </div>
+                    ) : (
+                      <div style={{ display: "block" }}> </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "3px",
+                      }}
+                    >
+                      {item.fields.issuetype.name === "Task" ? (
+                        <>
+                          <img
+                            src={taskIcon}
+                            alt="Task Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <img
+                            src={bugIcon}
+                            alt="Bug Logo"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                          <span //style={{ marginTop: "-3px", marginLeft: "-60px" }}
+                          >
+                            {item?.key}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {/* <FormGroup>
+                <FormControlLabel
+                  control={<Checkbox defaultChecked />}
+                  label={<span>{item?.key}</span>}
+                />
+              </FormGroup> */}
+                    <span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "3px",
+                          marginTop: "-10px",
+                        }}
+                      >
+                        <div style={{ marginTop: "8px" }}>
+                          <Tooltip title="Medium">
+                            {item?.fields?.priority?.name === "Medium" && (
+                              <span>
+                                <MenuOutlined style={{ color: "#FFAB00" }} />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="Low">
+                            {item?.fields?.priority?.name === "Low" && (
+                              <span>
+                                <DownOutlined
+                                  style={{ color: "rgb(0, 101, 255)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          <Tooltip title="High">
+                            {item?.fields?.priority?.name === "High" && (
+                              <span>
+                                <UpOutlined
+                                  style={{ color: "rgb(255, 86, 48)" }}
+                                />
+                              </span>
+                            )}
+                          </Tooltip>
+                          {!["Medium", "Low", "High"].includes(
+                            item?.fields?.priority?.name
+                          ) && (
+                            <Tooltip title="Medium">
+                              {item?.fields?.priority?.name === "Medium" && (
+                                <span>
+                                  <MenuOutlined style={{ color: "#FFAB00" }} />
+                                </span>
+                              )}
+                            </Tooltip>
+                          )}
+                        </div>
+                        <div className="Titleavatar">
+                          <Tooltip
+                            title={`Assignee: ${
+                              Fixeditem?.Fixeditem?.assignee || "Unassigned"
+                            }`}
+                          >
+                            {item?.fields?.assignee?.avatarUrls?.["48x48"] ? (
+                              <img
+                                src={
+                                  item?.fields?.assignee?.avatarUrls?.["48x48"]
+                                }
+                                alt="Avatar"
+                                className="imageAvatar"
+                              />
+                            ) : (
+                              <Avatar
+                                //className="imageAvatar"
+                                className="UnAssignedimageAvatar"
+                                icon={<UserOutlined />}
+                              />
+                            )}
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </Card>
+              );
+            })
+          : null}
+      </div>
+    </>
+  );
+}
+export default FixedCards;

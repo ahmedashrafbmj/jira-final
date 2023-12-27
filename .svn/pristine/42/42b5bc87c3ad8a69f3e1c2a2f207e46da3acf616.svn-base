@@ -1,0 +1,346 @@
+import * as React from "react";
+import { Grid, CircularProgress, Box } from "@mui/material";
+import Skeleton from "@mui/material/Skeleton/Skeleton.js";
+import "./style.css";
+import "./card.css";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  SerachData,
+  fetchProjectDetails,
+  fetchProjectDetailsAll,
+} from "../Redux/Actions/action.js";
+import BoardCards from "./boardCards.js";
+import SearchBox from "./sharedComponents/SearchContainer.js";
+import SearchCard from "./sharedComponents/SearchCard.js";
+import FilterCard from "./filterComponents/filterCards.js";
+import AssigneeCard from "./assigneeComponents/assigneeCards.js";
+import AssigneeContainer from "./assigneeComponents/assigneeContainer.js";
+
+export default function BoardContainer({ searchAssignee, collapsed }) {
+  const mainRoom = `mainRoom ${collapsed ? "collapsed" : ""}`;
+  const dispatch = useDispatch();
+  const dataloader = useSelector((state) => state?.searchedText.dataloader);
+  const dataloader1 = useSelector((state) => state?.searchedText.dataloader1);
+  const serachState = useSelector((state) => state?.searchedText.serachState);
+  const projects = useSelector((state) => state?.searchedText.projects);
+  const projectsAll = useSelector((state) => state?.searchedText?.projectsAll);
+  const value = useSelector((state) => state.searchedText.value);
+  const ApiSearch = useSelector((state) => state.searchedText.ApiSearch);
+  console.log(ApiSearch,"ApiSearch")
+  const serachLoader = useSelector(
+    (state) => state?.searchedText?.serachLoader
+  );
+  //Assignee API states
+  // const AssigneSearch = useSelector(
+  //   (state) => state.searchedText.AssigneSearch
+  // );
+  // //API Filter states
+  // const visibleGroupFilter = useSelector(
+  //   (state) => state?.searchedText?.visibleGroupFilter
+  // );
+
+  // const value = useSelector(
+  //   (state) => state?.searchedText?.value
+  // );
+
+  //projectAPI states   projectSearchData
+  const projectSearchData = useSelector(
+    (state) => state?.searchedText?.projectSearchData
+  );
+  console.log(projectSearchData, "projectSearchDataprojectSearchData");
+  //Assignee API states
+  const AssigneSearch = useSelector(
+    (state) => state.searchedText.AssigneSearch
+  );
+  //API Filter states
+  const visibleGroupFilter = useSelector(
+    (state) => state?.searchedText?.visibleGroupFilter
+  );
+  const filterValue = useSelector((state) => state?.searchedText?.filterValue);
+  const filtersData = useSelector((state) => state?.searchedText?.filtersData);
+  // console.log(filtersData, "filtersDataaaaaa");
+  const scrollerRef = React.useRef(null);
+  const boxesRef = React.useRef(null);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [dragStartX, setDragStartX] = React.useState(0);
+  const [scrollLeft, setScrollLeft] = React.useState(0);
+  console.log(projectsAll,"projectsAll")
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStartX(e.clientX);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStartX;
+    const newScrollLeft = scrollLeft + dx;
+
+    const boxesWidth = boxesRef.current.clientWidth;
+    const scrollerWidth = scrollerRef.current.clientWidth;
+    const maxScrollLeft = boxesWidth - scrollerWidth;
+
+    if (newScrollLeft >= 0 && newScrollLeft <= maxScrollLeft) {
+      setScrollLeft(newScrollLeft);
+      const scrollable = document.querySelector(".scrollable");
+      if (scrollable) {
+        scrollable.scrollLeft = newScrollLeft;
+      }
+      const mainRoom = document.querySelector(".mainRoom");
+      if (mainRoom) {
+        mainRoom.scrollLeft = newScrollLeft;
+      }
+    }
+    setDragStartX(e.clientX);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false);
+    }
+  };
+
+  React.useEffect(() => {
+    dispatch(fetchProjectDetails());
+    dispatch(fetchProjectDetailsAll());
+    localStorage.setItem("group", "All");
+  }, [searchAssignee]);
+
+  // React.useEffect(() => {
+  //   if (value) {
+  //     dispatch(SerachData(value));
+  //   }
+  // }, [value]);
+
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        top: "120px",
+      }}
+    >
+      <div className={`mainRoom ${collapsed ? "collapsed" : ""}`}>
+        <div style={{ display: "flex" }} className="scrollable">
+          <>
+            {!serachState ? (
+              <>
+                {dataloader ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: "5px",
+                      marginLeft: "5px",
+                      marginTop: "-165px",
+                    }}
+                  >
+                    {Array.from({ length: 10 }).map((_, index) => (
+                      <Skeleton animation="wave" width={230} height={780} />
+                    ))}
+                  </div>
+                ) : filterValue === "To do" ||
+                  filterValue === "In Progress" ||
+                  filterValue === "Done" ? (
+                  <>
+                    {filtersData?.map((item) => {
+                      return (
+                        <Grid>
+                          <div
+                            style={{
+                              padding: "24px 2px",
+                              width: "300px",
+                              margin: "2px 4px",
+                              overflow: "scroll",
+                            }}
+                            className="custom-card"
+                          >
+                            <p className="projectName">{item?.projectname}</p>
+                            <FilterCard filteredProject={item} />
+                          </div>
+                        </Grid>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <>
+                  {projects?.projectData?.map((project, index) => (
+                    <Grid item key={index}>
+                      {project?.name !== undefined ? (
+                        <div
+                          style={{
+                            padding: "24px 2px",
+                            width: "300px",
+                            margin: "2px 4px",
+                          }}
+                          className="custom-card"
+                        >
+                          <p className="projectName">{project?.name}</p>
+                          <BoardCards project={project} />
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </Grid>
+                  ))}
+                
+                  {dataloader1 ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "5px",
+                        marginLeft: "5px",
+                        marginTop: "-165px",
+                      }}
+                    >
+                      {Array.from({ length: 10 }).map((_, index) => (
+                        <Skeleton animation="wave" width={230} height={780} key={index} />
+                      ))}
+                    </div>
+                  ) : (
+                    projectsAll?.projectData?.map((project, index) => (
+                      <Grid item key={index}>
+                        {project?.name !== undefined ? (
+                          <div
+                            style={{
+                              padding: "24px 2px",
+                              width: "300px",
+                              margin: "2px 4px",
+                            }}
+                            className="custom-card"
+                          >
+                            <p className="projectName">{project?.name}</p>
+                            <BoardCards project={project} />
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </Grid>
+                    )))}
+
+                    {/* {dataloader1 ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "5px",
+                          marginLeft: "5px",
+                          marginTop: "-165px",
+                        }}
+                      >
+                        {Array.from({ length: 10 }).map((_, index) => (
+                          <Skeleton
+                            animation="wave"
+                            width={230}
+                            height={780}
+                            key={index}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      projects?.projectData?.map((project, index) => (
+                        <Grid item key={index}>
+                          {project?.name !== undefined ? (
+                            <div
+                              style={{
+                                padding: "24px 2px",
+                                width: "300px",
+                                margin: "2px 4px",
+                              }}
+                              className="custom-card"
+                            >
+                              <p className="projectName">{project?.name}</p>
+                              <BoardCards project={project} />
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </Grid>
+                      ))
+                    )} */}
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {serachLoader ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "170vh",
+                    }}
+                  >
+                    <CircularProgress />
+                  </div>
+                ) : ApiSearch?.length > 0 ? (
+                  ApiSearch?.map((item, index) => (
+                    <Grid>
+                      <div
+                        style={{
+                          padding: "24px 2px",
+                          width: "300px",
+                          margin: "2px 4px",
+                          overflow: "scroll",
+                        }}
+                        className="custom-card"
+                      >
+                        <p className="projectName">{item?.name}</p>
+                        {item?.assignees?.map((item) => {
+                          return <SearchCard project={item} />;
+                        })}
+                        {/* <SearchCard project={item?.assignees} /> */}
+                      </div>
+                    </Grid>
+                  ))
+                ) : (
+                  <Grid>
+                    <div
+                      style={{
+                        padding: "24px 2px",
+                        width: "300px",
+                        margin: "2px 4px",
+                        overflow: "scroll",
+                      }}
+                      className="custom-card"
+                    >
+                      <p className="projectName">{value}</p>
+                      <SearchCard projectData={projectSearchData} />
+                    </div>
+                  </Grid>
+                  // <SearchCard projectData={projectSearchData} />
+                )}
+              </>
+            )}
+          </>
+        </div>
+        <div
+          className="scrollBar"
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div className="boxes" ref={boxesRef}>
+            <div className="box"></div>
+            <div className="box"></div>
+            <div className="box"></div>
+            <div className="box"></div>
+            <div className="box"></div>
+          </div>
+          <div
+            className="scroller"
+            ref={scrollerRef}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            style={{ left: `${scrollLeft}px` }}
+          ></div>
+        </div>
+      </div>
+    </Box>
+  );
+}

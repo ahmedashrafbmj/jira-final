@@ -1,0 +1,455 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
+const AllProjectDetailURL =
+  //"https://embarrassed-drawers-boa.cyclic.app/api/project-data/Allproject-details";
+  "http://localhost:5000/api/project-data/Allproject-details";
+// const searchURL =
+//   "https://ruby-scary-hummingbird.cyclic.app/api/project-search/Allproject-search";
+
+export const fetchProjectDetails = createAsyncThunk(
+  "dashboard/fetchProjectDetails",
+  async (_, thunkAPI) => {
+    try {
+      const response = await fetch(String(AllProjectDetailURL), {
+        method: "GET",
+      });
+
+      const data = await response.json();
+      console.log(data, "datadatadata");
+
+      let projectData = [];
+      let issueTypes = [];
+
+      data.projectDetails.forEach((project) => {
+        if (project.errorMessages) {
+          console.error("Error in project data:", project.errorMessages);
+          return;
+        } else {
+          let projectAssignees = {};
+          project.issues.forEach((issue) => {
+            const assignee = issue.fields.assignee
+              ? issue.fields.assignee.displayName
+              : "Unassigned";
+            if (!projectAssignees[assignee]) {
+              projectAssignees[assignee] = [];
+            }
+            projectAssignees[assignee].push(issue);
+          });
+          const assigneesArray = Object.entries(projectAssignees).map(
+            ([assignee, issues]) => ({
+              assignee,
+              issues: issues,
+            })
+          );
+
+          projectData.push({
+            name: project.issues[0]?.fields?.project?.name,
+            assignees: assigneesArray,
+          });
+        }
+      });
+
+      return {
+        projectData: projectData,
+        allAsignee: data.allAsignee,
+      };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+export const fetchProjectDetailsAll = createAsyncThunk(
+  "dashboard/fetchProjectDetailsAll",
+  async (_, thunkAPI) => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/project-data/Allproject-detailsAll",
+        {
+          method: "GET",
+        }
+      );
+
+      const data = await response.json();
+      console.log(data, "datadatadata");
+
+      let projectData = [];
+      let issueTypes = [];
+
+      data.projectDetails.forEach((project) => {
+        if (project.errorMessages) {
+          console.error("Error in project data:", project.errorMessages);
+          return;
+        } else {
+          let projectAssignees = {};
+          project.issues.forEach((issue) => {
+            const assignee = issue.fields.assignee
+              ? issue.fields.assignee.displayName
+              : "Unassigned";
+            if (!projectAssignees[assignee]) {
+              projectAssignees[assignee] = [];
+            }
+            projectAssignees[assignee].push(issue);
+          });
+          const assigneesArray = Object.entries(projectAssignees).map(
+            ([assignee, issues]) => ({
+              assignee,
+              issues: issues,
+            })
+          );
+
+          projectData.push({
+            name: project.issues[0]?.fields?.project?.name,
+            assignees: assigneesArray,
+          });
+        }
+      });
+
+      return {
+        projectData: projectData,
+        allAsignee: data.allAsignee,
+      };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+//search by projectname API
+// export const SerachByProjectName = createAsyncThunk(
+//   "dashboard/SerachByProjectName",
+//   async (query, thunkAPI) => {
+//     try {
+//       const response = await fetch(
+//         `http://localhost:5000/api/project-ProjectName/searchby-project?query=${query}`,
+//         // `https://embarrassed-drawers-boa.cyclic.app/Allproject-search?query=${encodeURIComponent(
+//         //   query
+//         // )}`,
+//         {
+//           method: "GET",
+//         }
+//       );
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! Status: ${response.status}`);
+//       }
+
+//       const searchData = await response.json();
+
+//       // let projectAssignees = {};
+//       // let projectsArray = [];
+
+//       // searchData.issues.forEach((issue) => {
+//       //   if (issue.fields && issue.fields.project && issue.fields.project.name) {
+//       //     const projectName = issue.fields.project.name;
+//       //     const assignee = issue.fields.assignee
+//       //       ? issue.fields.assignee.displayName
+//       //       : "Unassigned";
+
+//       //     const summary = issue.fields.summary;
+//       //     const key = issue.key;
+
+//       //     // Exclude the description field
+//       //     const otherFields = Object.entries(issue.fields)
+//       //       .filter(([fieldName]) => fieldName !== "description")
+//       //       .reduce((acc, [fieldName, fieldValue]) => {
+//       //         acc[fieldName] = fieldValue;
+//       //         return acc;
+//       //       }, {});
+
+//       //     if (!projectAssignees[projectName]) {
+//       //       projectAssignees[projectName] = {
+//       //         name: projectName,
+//       //         assignees: [],
+//       //       };
+//       //     }
+//       //     const assigneeObject = projectAssignees[projectName].assignees.find(
+//       //       (assigneeObj) => assigneeObj.assignee === assignee
+//       //     );
+
+//       //     if (assigneeObject) {
+//       //       assigneeObject.issues.push({ summary, key, ...otherFields });
+//       //     } else {
+//       //       pryojectAssignees[projectName].assignees.push({
+//       //         assignee: assignee,
+//       //         issues: [{ summary, key, ...otherFields }],
+//       //       });
+//       //     }
+//       //   }
+//       // });
+
+//       //projectsArray = Object.values(projectAssignees);
+//       //console.log(projectsArray, "projectsArrayprojectsArray");
+//       return searchData;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error);
+//     }
+//   }
+// );
+
+//Global search API
+export const SerachData = createAsyncThunk(
+  "dashboard/SerachData",
+  async (query, thunkAPI) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/project-search/Allproject-search?query=${encodeURIComponent(
+          query
+        )}`,
+        // `https://embarrassed-drawers-boa.cyclic.app/Allproject-search?query=${encodeURIComponent(
+        //   query
+        // )}`,
+        {
+          method: "GET",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const searchData = await response.json();
+
+      let projectAssignees = {};
+      let projectsArray = [];
+
+      searchData.issues.forEach((issue) => {
+        if (issue.fields && issue.fields.project && issue.fields.project.name) {
+          const projectName = issue.fields.project.name;
+          const assignee = issue.fields.assignee
+            ? issue.fields.assignee.displayName
+            : "Unassigned";
+
+          const summary = issue.fields.summary;
+          const key = issue.key;
+
+          // Exclude the description field
+          const otherFields = Object.entries(issue.fields)
+            .filter(([fieldName]) => fieldName !== "description")
+            .reduce((acc, [fieldName, fieldValue]) => {
+              acc[fieldName] = fieldValue;
+              return acc;
+            }, {});
+
+          if (!projectAssignees[projectName]) {
+            projectAssignees[projectName] = {
+              name: projectName,
+              assignees: [],
+            };
+          }
+          const assigneeObject = projectAssignees[projectName].assignees.find(
+            (assigneeObj) => assigneeObj.assignee === assignee
+          );
+
+          if (assigneeObject) {
+            assigneeObject.issues.push({ summary, key, ...otherFields });
+          } else {
+            projectAssignees[projectName].assignees.push({
+              assignee: assignee,
+              issues: [{ summary, key, ...otherFields }],
+            });
+          }
+        }
+      });
+
+      projectsArray = Object.values(projectAssignees);
+      //console.log(projectsArray, "projectsArrayprojectsArray");
+      return projectsArray;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const SerachDataAssigne = createAsyncThunk(
+  "dashboard/SerachDataAssigne",
+  async (query, thunkAPI) => {
+    try {
+      const response = await fetch(
+        // `https://embarrassed-drawers-boa.cyclic.app/api/project-assigne/searchByAssignee-search?query=${encodeURIComponent(
+        //   query
+        // )}`,
+        `http://localhost:5000/api/project-assigne/searchByAssignee-search?query=${encodeURIComponent(
+          query
+        )}`,
+        {
+          method: "GET",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const searchData = await response.json();
+      let AssigneData = [];
+      console.log(searchData, "searchData");
+
+      let projectAssignees = {};
+      let projectsArray = [];
+
+      searchData.issues.forEach((issue) => {
+        if (issue.fields && issue.fields.project && issue.fields.project.name) {
+          const projectName = issue.fields.project.name;
+          const assignee = issue.fields.assignee
+            ? issue.fields.assignee.displayName
+            : "Unassigned";
+
+          if (!projectAssignees[projectName]) {
+            projectAssignees[projectName] = {
+              name: projectName,
+              assignees: [],
+            };
+          }
+
+          const assigneeObject = projectAssignees[projectName].assignees.find(
+            (assigneeObj) => assigneeObj.assignee === assignee
+          );
+
+          if (assigneeObject) {
+            assigneeObject.issues.push(issue);
+          } else {
+            projectAssignees[projectName].assignees.push({
+              assignee: assignee,
+              issues: [issue],
+            });
+          }
+        }
+      });
+
+      projectsArray = Object.values(projectAssignees);
+      return projectsArray;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+export const SerachByProjectName = createAsyncThunk(
+  "dashboard/SerachByProjectName",
+  async (query, thunkAPI) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/project-ProjectName/searchby-project?query=${query}`,
+        // `https://embarrassed-drawers-boa.cyclic.app/Allproject-search?query=${encodeURIComponent(
+        //   query
+        // )}`,
+        {
+          method: "GET",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const searchData = await response.json();
+
+      // let projectAssignees = {};
+      // let projectsArray = [];
+
+      // searchData.issues.forEach((issue) => {
+      //   if (issue.fields && issue.fields.project && issue.fields.project.name) {
+      //     const projectName = issue.fields.project.name;
+      //     const assignee = issue.fields.assignee
+      //       ? issue.fields.assignee.displayName
+      //       : "Unassigned";
+
+      //     const summary = issue.fields.summary;
+      //     const key = issue.key;
+
+      //     // Exclude the description field
+      //     const otherFields = Object.entries(issue.fields)
+      //       .filter(([fieldName]) => fieldName !== "description")
+      //       .reduce((acc, [fieldName, fieldValue]) => {
+      //         acc[fieldName] = fieldValue;
+      //         return acc;
+      //       }, {});
+
+      //     if (!projectAssignees[projectName]) {
+      //       projectAssignees[projectName] = {
+      //         name: projectName,
+      //         assignees: [],
+      //       };
+      //     }
+      //     const assigneeObject = projectAssignees[projectName].assignees.find(
+      //       (assigneeObj) => assigneeObj.assignee === assignee
+      //     );
+
+      //     if (assigneeObject) {
+      //       assigneeObject.issues.push({ summary, key, ...otherFields });
+      //     } else {
+      //       pryojectAssignees[projectName].assignees.push({
+      //         assignee: assignee,
+      //         issues: [{ summary, key, ...otherFields }],
+      //       });
+      //     }
+      //   }
+      // });
+
+      //projectsArray = Object.values(projectAssignees);
+      //console.log(projectsArray, "projectsArrayprojectsArray");
+      return searchData;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+export const groupByFilterAction = createAsyncThunk(
+  "dashboard/groupByFilterAction",
+  async (query, thunkAPI) => {
+    try {
+      console.log(query, "queryyyyy");
+      const response = await fetch(
+        // `https://embarrassed-drawers-boa.cyclic.app/api/project-groupByfilter/groupBy-filter?query=${encodeURIComponent(
+        //   query
+        // )}`,
+        `http://localhost:5000/api/project-groupByfilter/groupBy-filter?query=${encodeURIComponent(
+          query
+        )}`,
+        {
+          method: "GET",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const filtersData = await response.json();
+
+      let projectAssignees = {};
+      let projectsArray = [];
+
+      filtersData.issues.forEach((issue) => {
+        if (issue.fields && issue.fields.project && issue.fields.project.name) {
+          const projectName = issue.fields.project.name;
+          const issuetype = issue.fields.issuetype
+            ? issue.fields.issuetype.name
+            : "null";
+
+          if (!projectAssignees[projectName]) {
+            projectAssignees[projectName] = {
+              projectname: projectName,
+              issuetype: [],
+            };
+          }
+
+          // const assigneeObject = projectAssignees[projectName].issuetype.find(
+          //   (assigneeObj) => assigneeObj.assignee === issuetype
+          // );
+
+          // if (assigneeObject) {
+          //   assigneeObject.issues.push(issue);
+          // }
+          // else {
+
+          projectAssignees[projectName].issuetype.push({
+            //issuetype: issuetype,
+            issues: issue,
+          });
+        }
+        // }
+      });
+
+      projectsArray = Object.values(projectAssignees);
+
+      console.log(projectsArray, "projectsArrayyyyy");
+      return projectsArray;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);

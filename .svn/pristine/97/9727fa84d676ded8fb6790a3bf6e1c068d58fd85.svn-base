@@ -1,0 +1,76 @@
+.ant-layout .ant-layout-sider .sideMenu{
+   background-color: rgb(240, 248, 255);
+   z-index: 5;
+}
+.headerTitle {
+    flex: 1; 
+    align-items: flex-start;
+    font-size: x-large;
+    font-weight: bold;
+    margin-top: "-12px",
+  }
+  .Proprintlogo{
+   display: flex;
+   flex-direction: row;
+   margin-top: 13px;
+  }
+  .proprintLogoText{
+  
+   color: rgb(84, 189, 250);
+   font-size: x-large;
+   font-weight: 700;
+   margin-top: 10px;
+  }
+  .fontClass{
+   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: var(--ds-font-lineHeight-200, 1.42857142857143);
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    text-decoration-skip-ink: auto;
+  }
+  .menuItems{
+   position: relative;
+    display: flex;
+    box-sizing: border-box;
+    /* width: 100%;
+    min-height: 40px; */
+    margin: var(--ds-space-0, 0px);
+    -webkit-box-align: center;
+    align-items: center;
+    border: 0px;
+    font-size: var(--ds-font-size-100, 14px);
+    outline: 0px;
+    text-decoration: none;
+    user-select: none;
+    padding-block: var(--ds-space-100, 8px);
+    padding-inline: var(--ds-space-200, 5px);
+    background-color: var(--ds-background-neutral-subtle, transparent);
+    color: currentcolor;
+    cursor: pointer;
+    &:hover{
+      background-color: rgb(232, 236, 243); 
+    }
+  }
+  /* Hover styles */
+  .hoverEffect {
+    border-color: gray;
+    border-radius: 5px;
+    &:hover {
+        transition: color 0.2s, transform 0.1s, margin-left 0.1s ease-in;
+        background: #4c9aff;
+        border-radius: 50%;
+        border-color: gray;
+     }
+  }
+/* Add this CSS to your stylesheet or in your component style object */
+.custom-search .ant-input:hover::placeholder {
+  color: gray; /* Change this to the color you want on hover */
+}
+.ant-input-search .ant-input-search-button {
+  height: 31px;
+}
+.ant-menu-item .dashboardPadding{
+  padding-left: 1px;
+}

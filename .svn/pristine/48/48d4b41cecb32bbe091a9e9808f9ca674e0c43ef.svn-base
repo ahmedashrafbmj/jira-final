@@ -1,0 +1,65 @@
+import React, { useEffect, useState } from "react";
+import { Grid, CircularProgress, Box } from "@mui/material";
+import { Layout } from "antd";
+//import "../style.css";
+import "../../components/card.css";
+import { useSelector, useDispatch } from "react-redux";
+import SearchCard from "./SearchCard.js";
+import HeaderComponenet from "../dashboard/Header/header.js";
+import SidebarComponenet from "../dashboard/Sidebar/sidebar.js";
+import SearchBox from "./SearchContainer.js";
+import { useNavigate, useParams } from "react-router-dom";
+import BoardContainer from "../boardContainer.js";
+import FilterBox from "../filterComponents/filterContainer.js";
+import AssigneeContainer from "../assigneeComponents/assigneeContainer.js";
+const { Sider, Content } = Layout;
+
+export default function SearchContainer() {
+  const { searchAssignee } = useParams();
+  const AssigneSearch = useSelector(
+    (state) => state?.searchedText.AssigneSearch
+  );
+const Navigate = useNavigate()
+  const { groupBy } = useParams();
+  // const ApiSearch = useSelector((state) => state?.searchedText.ApiSearch);
+  // const serachLoader = useSelector(
+  //   (state) => state?.searchedText?.serachLoader
+  // );
+
+  const [collapsed, setCollapsed] = React.useState(false);
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
+    window.location.href = "/"
+  };
+  return (
+    <>
+      <Layout style={{ width: "2000px" }}>
+        <HeaderComponenet />
+        <Content>
+          <Layout
+            style={{
+              width: "200",
+              //marginLeft: collapsed ? "-340px" : "-285px",
+              marginLeft: collapsed ? "-340px" : "-330px",
+            }}
+          >
+            <SidebarComponenet
+              collapsed={collapsed}
+              onToggleSidebar={toggleSidebar}
+            />
+            {
+              searchAssignee !== "searchAssignee" ? (
+                <AssigneeContainer AssigneSearch={AssigneSearch} />
+              ) : (
+                <BoardContainer />
+              )
+              // (
+              //   <BoardContainer searchAssignee={searchAssignee} />
+              // )
+            }
+          </Layout>
+        </Content>
+      </Layout>
+    </>
+  );
+}

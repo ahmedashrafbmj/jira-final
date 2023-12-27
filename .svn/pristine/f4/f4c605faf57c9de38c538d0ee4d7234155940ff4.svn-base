@@ -1,0 +1,239 @@
+.cardContainer {
+  border-color: darkgray;
+  border: 1px;
+}
+.cardShadow {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 20px 20px 56px #bcbcbc, -20px -20px 56px #ffffff;
+}
+.columnContainer {
+  display: flex;
+  flex-direction: row;
+  width: "200px";
+}
+
+.responsive-table {
+  overflow-x: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@media (max-width: 600px) {
+  .responsive-table {
+    max-width: 100%;
+  }
+}
+.description {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-top: -10px;
+}
+
+.imageAvatar {
+  width: "28px";
+  height: 28px;
+  border-radius: 30%;
+  margin-top: 15px;
+}
+.Titleavatar {
+  margin-top: -18px;
+  /* display: flex;
+    flex-direction: row;   
+    gap: 4px; */
+}
+.ant-avatar.ant-avatar-icon .UnAssignedimageAvatar {
+  font-size: 20px;
+  /* width: 30px;
+  height: 30px; */
+  /* border-radius:30% ; */
+  margin-top: 13px;
+}
+.fixed-container {
+  /* flex: 0 0 auto;  */
+  /* width: 300px;  */
+  /* border: 1px solid #ccc; 
+  padding: 10px;  */
+  
+  overflow: hidden;
+  margin: 0px;
+  top: 240px;
+  display: "flex";
+  flex-direction: column;
+  gap: 5px;
+  /* position: fixed; */
+
+  /* display: flex;
+  flex-direction: column; */
+  /* align-items: flex-start; */
+  /* flex-wrap: wrap; */
+}
+.card {
+  /* border: 1px solid #ccc; */
+  margin-left: 0;
+  /* max-width: 100%; */
+  /* width: 250px; */
+  flex: 1;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+@media (max-width: 968px) {
+  .card {
+    width: 100%;
+    /* Additional styles for smaller screens, if needed */
+  }
+}
+
+.fixed-container.highlighted {
+  /* Add your styles for highlighted cards here */
+  background-color: yellow; /* Example highlighting with a yellow background */
+}
+
+.scrollable-container {
+  /* flex-grow: 1;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin-top: 0px;
+  height: 20vh;
+  width: 261px;
+  scrollbar-width: none; 
+  -ms-overflow-style: none;  */
+  /* position: fixed; */
+  /* flex-wrap: wrap; */
+  /* overflow: hidden; */
+  display: "flex";
+  flex-direction: column;
+  gap: 5px;
+  overflow-y: scroll;
+  margin: 0px;
+  top: 240px;
+  max-height: 160px;
+  /* overflow-y: auto;  */
+
+  /* Style the scrollbar for webkit-based browsers (e.g., Chrome) */
+  scrollbar-width: thin; /* Set the width of the scrollbar to "thin" */
+  scrollbar-color: #555555 #dddddd; /* Customize the scrollbar color */
+}
+.scrollable-container::-webkit-scrollbar {
+  width: 5px;
+  display: none;
+}
+.card-container {
+  overflow: auto;
+  height: 85%;
+}
+.ant-card-body {
+  padding: 24px 2px !important;
+}
+
+.ant-card {
+  padding: 0px 24px;
+}
+
+.scrollable-container::-webkit-scrollbar,
+.card-container::-webkit-scrollbar {
+  width: 6px; /* Adjust the width of the scrollbar */
+}
+
+.scrollable-container::-webkit-scrollbar-thumb,
+.card-container::-webkit-scrollbar-thumb {
+  background-color: #555555; /* Customize the thumb color */
+}
+
+.scrollable-container::-webkit-scrollbar-thumb:hover,
+.card-container::-webkit-scrollbar-thumb:hover {
+  background-color: #333333; /* Customize the thumb color on hover */
+}
+
+.scrollable-container::-webkit-scrollbar-track,
+.card-container::-webkit-scrollbar-track {
+  background-color: #dddddd; /* Customize the track color */
+}
+
+.mainRoom {
+  /* border: 2px solid red; */
+  height: 75vh;
+  overflow-y: hidden;
+  width: 87vw;
+  overflow-x: scroll;
+  box-shadow: 1px 1px 3px gray;
+  /* overflow-y: hidden; */
+  margin-left: 511px;
+  transition: width 0.5s; /* Add a transition for a smoother effect */
+
+}
+.mainRoom.collapsed {
+  width: 94.5vw !important;
+}
+/* .SidebarComponenet.collapsed {
+  width: 83vw;
+} */
+
+.mainRoom::-webkit-scrollbar {
+  height: 5px; /* Adjust the width of the scrollbar */
+  border-radius: 100px;
+  width: -55px;
+}
+
+.mainRoom::-webkit-scrollbar-thumb {
+  background-color: #555555; /* Customize the thumb color */
+  border-radius: 100px;
+}
+
+.mainRoom::-webkit-scrollbar-thumb:hover {
+  background-color: #333333; /* Customize the thumb color on hover */
+  border-radius: 100px;
+}
+
+.mainRoom::-webkit-scrollbar-track {
+  background-color: #dddddd; /* Customize the track color */
+  /* border-radius: 100px; */
+}
+
+/* scroller  */
+.scrollBar {
+  padding: 0px;
+  /* height: 40px; */
+  /* width: 70px; */
+  position: absolute;
+  bottom: -55px;
+  right: 200px;
+  background-color: rgb(222, 220, 220);
+  box-shadow: 1px 1px 7px gray;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  /* display: block; */
+}
+.boxes {
+  position: relative;
+  padding: auto 6px;
+  display: flex;
+}
+.scroller {
+  border-radius: 4px;
+  position: absolute;
+  top: 3px;
+  left: 10px;
+  cursor: move;
+  /* z-index: 1000; */
+  background-color: transparent;
+  height: 88%;
+  width: 95px;
+  border: 2.5px solid rgb(45, 45, 237, 0.7);
+  transition: 0s ease;
+}
+.box {
+  margin: 5px 2px;
+  z-index: 100;
+  width: 20px;
+  height: 30px;
+  /* border: 2px solid gray; */
+  background-color: gray;
+  opacity: 0.6;
+}
+.highlighted {
+  background-color: rgb(164, 192, 245); /* Example background color for highlighting */
+  /* Add any other styles for highlighting */
+}
+/*  */

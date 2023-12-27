@@ -1,0 +1,723 @@
+import React, { useEffect, useState } from "react";
+import {
+  DashboardTwoTone,
+  MenuOutlined,
+  AudioOutlined,
+} from "@ant-design/icons";
+import { Tooltip } from "@mui/material";
+import { Avatar, Card } from "antd";
+import "../style.css";
+import { Breadcrumb, Layout, Menu, theme } from "antd";
+import logo from "../../../images/proprintIcon.png";
+import { Input, Space } from "antd";
+import { MenuItem } from "@mui/material";
+import { FormControl, Checkbox, Select, FormControlLabel } from "@mui/material";
+import "../contentstyle.css";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setValue,
+  clearSearchValue,
+  getStatusFilter,
+} from "../../../Redux/store/slice.js";
+import { useNavigate } from "react-router-dom";
+import debounce from "lodash/debounce.js";
+import {
+  SerachData,
+  SerachDataAssigne,
+  groupByFilterAction,
+  SerachByProjectName,
+} from "../../../Redux/Actions/action.js";
+import BoardContainer from "../../boardContainer.js";
+const { Header } = Layout;
+const { Search } = Input;
+
+let speech;
+if (window.webkitSpeechRecognition) {
+  const SpeechRecognition = window.webkitSpeechRecognition;
+  speech = new SpeechRecognition();
+} else {
+  console.error("SpeechRecognition not supported");
+}
+
+function HeaderComponenet() {
+  const projects2 = useSelector((state) => state?.searchedText.projectsAll);
+  // console.log(projects2, "projet222");
+  const allAsignee = projects2?.allAsignee;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [listening, setListening] = useState(false);
+  const [isShow, setIsShow] = useState(true);
+  const [isListening, setIsListening] = useState(false);
+  const [text, setText] = useState(String);
+  const [voicetext, setVoiceText] = useState(String);
+
+  const [age, setAge] = React.useState("All");
+  const [status, setStatus] = useState(["All"]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [searchValue, setSearchvalue] = React.useState("");
+  const ApiSearch = useSelector((state) => state?.searchedText?.ApiSearch);
+
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value;
+    debouncedSearch(inputValue);
+    setText(inputValue);
+  };
+
+  const handleSearch = async (value) => {
+    // Assuming `dispatch` is asynchronous, you may want to wait for the API call to complete before dispatching other actions.
+    try {
+      if (value !== "") {
+        if (searchdropDown === "Project") {
+          dispatch(setValue(value));
+          dispatch(SerachByProjectName(value));
+        }
+        //await dispatch(SerachData(value));
+        // await dispatch(SerachByProjectName(value));
+      } else {
+        dispatch(clearSearchValue());
+        console.log("clearSearchValue dispatched");
+      }
+    } catch (error) {
+      console.error("Error during search:", error);
+    }
+  };
+
+  const debouncedSearch = debounce((value) => {
+    handleSearch(value);
+    //setText(value);
+  }, 500);
+
+  // React.useEffect(() => {
+  //   if (value) {
+  //     dispatch(SerachData(value));
+  //   }
+  // }, [value]);
+
+  // const handleInputChange = (e) => {
+  //   setText(e.target.value);
+  //   //dispatch(setValue(text));
+  // };
+  const handleChangeStatus = (selectedStatus) => {
+    if (selectedStatus === "Alll") {
+      setSelectAll((prev) => !prev);
+      setStatus(selectAll ? [] : ["Done", "Progress", "REVIEW"]); // Add all status values as needed
+    } else {
+      const newStatus = status.includes(selectedStatus)
+        ? status.filter((s) => s !== selectedStatus)
+        : [...status, selectedStatus];
+      setStatus(newStatus);
+      setSelectAll(false);
+    }
+
+    localStorage.setItem("status", selectedStatus);
+    localStorage.setItem("group", "All");
+  };
+
+  const handlefilters = (event) => {
+    setAge(event.target.value);
+    dispatch(getStatusFilter(event.target.value));
+    if (
+      event.target.value === "Task" ||
+      event.target.value === "Subtask" ||
+      event.target.value === "Bug"
+    ) {
+      dispatch(groupByFilterAction(event.target.value));
+    }
+  };
+  const [isHovered, setIsHovered] = useState(false);
+  const [backnavigation, setbacknavigation] = useState(false);
+  const [isHover, setIsHover] = useState(false);
+  const [showPlaceholder, setShowPlaceholder] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+  const [isclick, setIsClick] = useState(false);
+  const [searchdropDown, setSearchdropDown] = React.useState("search By");
+  console.log(searchdropDown, "searchdropDown");
+
+  const handlesearchDropDown = (event) => {
+    setSearchdropDown(event.target.value);
+  };
+  // const handlePointerEnter = () => {
+  //   setIsHover(true);
+  //   setShowPlaceholder(true);
+  // };
+  // const handlePointerLeave = () => {
+  //   setIsHover(false);
+  //    setShowPlaceholder(true);
+  //    setTimeout(() => {
+  //     if (!isHover) {
+  //       // Additional logic to execute after the delay
+  //       console.log('Left after delay!');
+  //       // You can add additional styling or behavior when the mouse leaves after the delay
+  //     }
+  //   }, 5000);
+  // };
+  const handleHover = () => {
+    setIsHover(true);
+    // Add your hover-related logic here
+    console.log("Hovered!");
+    // You can add additional styling or behavior when the search bar is hovered
+  };
+
+  const handlePointerLeave = () => {
+    setIsHover(false);
+    // Set a timeout for 1 second (adjust as needed)
+    // setTimeout(() => {
+    //   if (!isHover) {
+    //     // Additional logic to execute after the delay
+    //     console.log('Left after delay!');
+    //     // You can add additional styling or behavior when the mouse leaves after the delay
+    //   }
+    // }, 1000);
+    setShowPlaceholder(true);
+  };
+
+  const handleClicked = () => {
+    setIsClick(true);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setListening(false);
+  };
+
+  const handleClick = () => {
+    setIsClicked(!isClicked);
+    setIsShow(false);
+  };
+
+  useEffect(() => {
+    if (!speech) {
+      console.error("Speech recognition not supported");
+      return;
+    }
+
+    speech.onstart = () => {};
+
+    speech.onend = () => {};
+
+    speech.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+    };
+
+    speech.onresult = (event) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const recognizedText = event.results[i][0].transcript;
+      }
+
+      // Use the last result for final transcription
+      const finalText = event.results[event.results.length - 1][0].transcript;
+      console.log("Final Recognized Text:", finalText);
+      setVoiceText(finalText);
+    };
+    return () => {
+      // Cleanup function to stop speech recognition when the component unmounts
+      speech.stop();
+      setVoiceText("");
+    };
+  }, [speech]);
+
+  const listen = () => {
+    setIsListening(!isListening);
+    if (isListening) {
+      setTimeout(() => {
+        speech.stop();
+      }, 2000);
+    } else {
+      //console.log("Before speech.start()");
+      speech.start();
+      //console.log("After speech.start()");
+    }
+  };
+
+  // const handleSearch = (text) => {
+  //   if (text !== "") {
+  //     dispatch(setValue(text));
+  //     // Other actions related to searching...
+  //   } else {
+  //     dispatch(clearSearchValue());
+  //     console.log("clearSearchValue dispatched");
+  //     // Other actions related to clearing the search...
+  //   }
+  // };
+  // const navigateToRoot = () => {
+  //   alert();
+  //   // Replace this line with your actual navigation logic
+  //   console.log("Navigate to root");
+  // };
+  const handleCancel = () => {
+    console.log("Cancel button clicked");
+    alert("Cancel button clicked");
+    dispatch(clearSearchValue());
+    //console.log(voicetext, "voicetextttt");
+  };
+
+  useEffect(() => {
+    if (voicetext) {
+      dispatch(setValue(voicetext));
+      dispatch(SerachData(voicetext));
+      //navigate("/search/searchAssi");
+    }
+    // else {
+    //   dispatch(clearSearchValue());
+    //   console.log("clearSearchValue dispatched");
+    // }
+  }, [voicetext]);
+
+  if ("speechSynthesis" in window) {
+    // SpeechSynthesis is supported
+  } else {
+    // console.error("Speech synthesis not supported");
+  }
+
+  const speakText = (text) => {
+    if ("speechSynthesis" in window) {
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = text;
+      speechSynthesis.speak(msg);
+    } else {
+      console.error("Speech synthesis not supported");
+    }
+  };
+  useEffect(() => {
+    if (searchValue) {
+      const combinedText = "Search Result Include " + searchValue;
+      console.log("Speaking text:", combinedText);
+      speakText(combinedText);
+    } else {
+      console.log("No text to speak");
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
+    if (ApiSearch?.issues?.length > 0) {
+      setSearchvalue(ApiSearch?.issues[0]?.fields?.project?.name);
+    }
+  }, [text]);
+
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
+
+  const visibleCount = 5;
+  const uniqueAssigneeNames = new Set();
+
+  const handleAvatarClick = (index) => {
+    console.log(index, "index");
+    if (index == selectedAvatar) {
+      // The same parameter was clicked again, handle back navigation here
+      // For example, you can use window.history.back() or your navigation logic
+      // navigate("/previousPage");
+      navigate("/");
+      setbacknavigation(true);
+      console.log("Same parameter clicked again, handling back navigation");
+      return;
+    } else {
+      setSelectedAvatar(index);
+      dispatch(SerachDataAssigne(index));
+      dispatch(setValue(index));
+      navigate("/search/searchAssignee");
+    }
+  };
+  // const handleChange = (event) => {
+  //   const selectedValue = event.target.value;
+  //   //const selectedIndex = event?.currentTarget?.getAttribute("index");
+  //   console.log(event, "indexxxx");
+
+  //   // Dispatch the action with the index
+  //   dispatch(groupByFilterAction(10009));
+
+  //   // Update the state with the selected value
+  //   setAge(selectedValue);
+  // };
+  return (
+    <>
+      {backnavigation && <BoardContainer />}
+      <Header
+        style={{
+          display: "flex",
+          alignItems: "center",
+          background: "rgba(255, 255, 255, 0.5)",
+          position: "fixed",
+        }}
+      >
+        <div className="Proprintlogo">
+          <img
+            src={logo}
+            alt="Logo"
+            style={{
+              width: "50px",
+              height: "50px",
+              display: "flex",
+              marginTop: "5px",
+              alignItems: "flex-start",
+              //marginLeft: "-30px",
+            }}
+          />
+        </div>
+        <div className="pageHeaderContainer">
+          <hr class="gray-lineTop " />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              // gap: "100px",
+              // height: "40px",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "row", gap: "none" }}>
+              <div
+                style={{
+                  marginTop: "10px",
+                  marginRight: "-10px",
+                }}
+              >
+                <Space>
+                  <FormControl>
+                    <Select
+                      style={{
+                        height: "30px",
+                        marginTop: "10px",
+                        fontSize: "11px",
+                      }}
+                      className="menuItems"
+                      //defaultValue="search By" // Set the default value here
+                      value={searchdropDown}
+                      onChange={handlesearchDropDown}
+                      inputProps={{ "aria-label": "Without label" }}
+                    >
+                      <MenuItem
+                        value="Project"
+                        index={1}
+                        style={{ fontSize: "11px" }}
+                      >
+                        Project name
+                      </MenuItem>
+                      <MenuItem
+                        value="Key"
+                        index={2}
+                        style={{ fontSize: "11px" }}
+                      >
+                        Key name
+                      </MenuItem>
+                      <MenuItem
+                        value="AssigneeName"
+                        index={3}
+                        style={{ fontSize: "11px" }}
+                      >
+                        Assignee name
+                      </MenuItem>
+                      {/* <MenuItem value="Assignee" index={4} style={{ fontSize: "11px" }}>
+        Assignee
+      </MenuItem> */}
+                      <MenuItem
+                        value="Description"
+                        index={5}
+                        style={{ fontSize: "11px" }}
+                      >
+                        Description
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Space>
+              </div>
+              {/* {isShow ? ( */}
+              <Search
+                //placeholder={isHover ? 'Search project':''}
+                placeholder="Search project"
+                //placeholder={isHover ? "Search project" : ""}
+                allowClear
+                style={{
+                  fontSize: "11px",
+                  width: "185px",
+                  //width: isclick ? "185px" : "120px",
+                  padding: "10px",
+                  marginTop: "10px",
+                  transition: "width 0.2s ease-in", // Add a smooth transition for width change
+                }}
+                value={text ? text : voicetext}
+                //onSearch={handleSearch}
+                onCancel={handleCancel}
+                onChange={handleInputChange}
+                onPointerEnter={handleHover}
+                onPointerLeave={handlePointerLeave}
+                onClick={handleClicked}
+                className="custom-search" // add a custom class for styling
+                //onChange={handleInputChangeDebounced}
+              />
+
+              {/* ) : null} */}
+              <div
+                onClick={handleClick}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                  cursor: "pointer",
+                  marginTop: "10px",
+                }}
+              >
+                <AudioOutlined
+                  onClick={listen}
+                  style={{
+                    fontSize: "22px",
+                    padding: "5px",
+                    color: isHovered ? "Blue" : "GrayText",
+                    background: isClicked ? "lightgray" : "none",
+                    borderRadius: "50%",
+                  }}
+                  className={`${isListening && "isListening"}`}
+                />
+              </div>
+              <div
+                style={{
+                  marginTop: "13px",
+                }}
+              >
+                <Avatar.Group
+                  maxCount={1}
+                  maxStyle={{
+                    color: "#f56a00",
+                    size: "small",
+                    backgroundColor: "#fde3cf",
+                    cursor: "pointer",
+                  }}
+                >
+                  {allAsignee?.map((firstindex, i) => {
+                    return (
+                      <div
+                        style={{ display: "flex", flexDirection: "row" }}
+                        key={i}
+                      >
+                        {firstindex?.map((e, j) => {
+                          if (!uniqueAssigneeNames.has(e.displayName)) {
+                            uniqueAssigneeNames.add(e.displayName);
+                            return (
+                              <Tooltip
+                                style={{
+                                  margin: "-1px",
+                                  marginTop: "3px",
+                                  padding: "0px",
+                                }}
+                                key={j}
+                                title={e.displayName}
+                              >
+                                <img
+                                  key={j}
+                                  src={e?.avatarUrls?.["48x48"]}
+                                  alt="Avatar"
+                                  className="imageAvatar"
+                                  onClick={() =>
+                                    handleAvatarClick(e.displayName)
+                                  }
+                                />
+                              </Tooltip>
+                            );
+                          }
+                          return null;
+                        })}
+                      </div>
+                    );
+                  })}
+                </Avatar.Group>
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginLeft: "350px",
+                position: "fixed",
+                left: "692px",
+                top: "21px",
+                // gap: "20px",
+              }}
+            >
+              <Space>
+                <h5 className="fontClass">GROUP BY</h5>
+                <FormControl>
+                  <Select
+                    style={{
+                      height: "30px",
+                      marginTop: "15px",
+                      fontSize: "11px",
+                    }}
+                    className="menuItems"
+                    value={age}
+                    onChange={handlefilters}
+                    //displayEmpty={false}
+                    inputProps={{ "aria-label": "Without label" }}
+                  >
+                    <MenuItem
+                      value="All"
+                      index={1}
+                      style={{ fontSize: "11px" }}
+                    >
+                      All
+                    </MenuItem>
+                    <MenuItem
+                      value="Bug"
+                      index={2}
+                      style={{ fontSize: "11px" }}
+                    >
+                      Bug
+                    </MenuItem>
+                    <MenuItem
+                      value="Task"
+                      index={3}
+                      style={{ fontSize: "11px" }}
+                    >
+                      Task
+                    </MenuItem>
+                    {/* <MenuItem
+                      value="Assignee"
+                      index={4}
+                      style={{ fontSize: "11px" }}
+                    >
+                      Assignee
+                    </MenuItem> */}
+                    <MenuItem
+                      value="Subtask"
+                      index={5}
+                      style={{ fontSize: "11px" }}
+                    >
+                      Subtask
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Space>
+              <Space style={{ marginLeft: "11px" }}>
+                <FormControl>
+                  <Select
+                    style={{
+                      height: "30px",
+                      marginTop: "15px",
+                      fontSize: "11px",
+                    }}
+                    className="menuItems"
+                    defaultValue="status"
+                    onChange={(e) => handleChangeStatus(e.target.value)}
+                    value={status.length === 4 ? ["Alll"] : status}
+                    renderValue={(selected) => {
+                      return (
+                        <span
+                          className="fontClass"
+                          style={{ fontSize: "11px" }}
+                        >
+                          <span style={{ fontWeight: "bold" }}>Status:</span>{" "}
+                          {selected.length == 0 ? "status" : selected[0]}{" "}
+                          {selected.length > 1 &&
+                            `+${selected.length - 1} more`}
+                        </span>
+                      );
+                    }}
+                  >
+                    <MenuItem
+                      value="Alll"
+                      style={{
+                        fontSize: "11px",
+                        //color: "#000080",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={selectAll}
+                            size="small" // Set the size of the checkbox
+                            style={{ fontSize: "11px" }} // Set the size of the checkbox icon
+                          />
+                        }
+                        label={
+                          <span style={{ fontSize: "11px" }}>CHECKED ALL</span> // Set the size of the label
+                        }
+                        onChange={() => handleChangeStatus("Alll")}
+                        style={{ fontSize: "11px" }} // Set the size of the entire FormControlLabel
+                      />
+                    </MenuItem>
+                    <MenuItem
+                      value="Done"
+                      style={{
+                        fontSize: "11px",
+                        //color: "#000080",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={status.includes("Done")}
+                            size="small" // Set the size of the checkbox
+                            style={{ fontSize: "11px" }} // Set the size of the checkbox icon
+                          />
+                        }
+                        label={
+                          <span style={{ fontSize: "11px" }}>DONE</span> // Set the size of the label
+                        }
+                        onChange={() => handleChangeStatus("Done")}
+                        style={{ fontSize: "11px" }} // Set the size of the entire FormControlLabel
+                      />
+                    </MenuItem>
+                    <MenuItem
+                      value="Progress"
+                      style={{
+                        fontSize: "11px",
+                        //color: "#000080",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={status.includes("Progress")}
+                            size="small" // Set the size of the checkbox
+                            style={{ fontSize: "11px" }} // Set the size of the checkbox icon
+                          />
+                        }
+                        label={
+                          <span style={{ fontSize: "11px" }}>IN PROGRESS</span> // Set the size of the label
+                        }
+                        onChange={() => handleChangeStatus("Progress")}
+                        style={{ fontSize: "11px" }} // Set the size of the entire FormControlLabel
+                      />
+                    </MenuItem>
+                    <MenuItem
+                      value="REVIEW"
+                      style={{
+                        fontSize: "11px",
+                        //color: "#000080",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={status.includes("REVIEW")}
+                            size="small" // Set the size of the checkbox
+                            style={{ fontSize: "11px" }} // Set the size of the checkbox icon
+                          />
+                        }
+                        label={
+                          <span style={{ fontSize: "11px" }}>IN REVIEW</span> // Set the size of the label
+                        }
+                        onChange={() => handleChangeStatus("REVIEW")}
+                        style={{ fontSize: "11px" }} // Set the size of the entire FormControlLabel
+                      />
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Space>
+            </div>
+          </div>
+          <hr class="gray-line" />
+        </div>
+        <Menu
+          className="headerMenu"
+          mode="horizontal"
+          defaultSelectedKeys={["2"]}
+        />
+      </Header>
+    </>
+  );
+}
+export default HeaderComponenet;

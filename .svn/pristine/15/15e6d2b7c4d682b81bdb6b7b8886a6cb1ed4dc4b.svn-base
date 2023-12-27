@@ -1,0 +1,151 @@
+// slice.js
+import { createSlice } from "@reduxjs/toolkit";
+import {
+  fetchProjectDetails,
+  SerachData,
+  SerachDataAssigne,
+  groupByFilterAction,
+  SerachByProjectName,
+  fetchProjectDetailsAll,
+} from "../Actions/action.js";
+
+const SearchSlice = createSlice({
+  name: "dashboard",
+  initialState: {
+    value: {},
+    projects: [],
+    projectsAll: [],
+    searchResult: [],
+    ApiSearch: [],
+    AssigneSearch: [], // New state property for the assignee search
+    filtersData: [],
+    projectSearchData: [],
+    visibleGroupFilter: false,
+    searchState: false,
+    dataloader: false,
+    dataloader1: false,
+    serachLoader: false,
+    serachState: false,
+    filterValue: "",
+    searchdropdown: "",
+    assigneeLoader: false, // Added assigneeLoader state
+    error: null, // Added error state to handle errors
+  },
+  reducers: {
+    setValue: (state, action) => {
+      state.value = action.payload;
+      state.serachState = true;
+    },
+    clearSearchValue: (state) => {
+      state.value = "";
+      state.serachState = false;
+    },
+    getStatusFilter: (state, action) => {
+      console.log(action.payload, "actionsss");
+      state.filterValue = action.payload;
+    },
+    getSearchDropDownValue: (state, action) => {
+      console.log(action.payload, "dropdown");
+      state.searchdropdown = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProjectDetails.pending, (state) => {
+        state.dataloader = true;
+      })
+      .addCase(fetchProjectDetails.fulfilled, (state, action) => {
+        state.dataloader = false;
+        state.projects = action?.payload;
+      })
+      .addCase(fetchProjectDetails.rejected, (state, action) => {
+        state.dataloader = false;
+        state.error = action?.payload;
+      })
+      // 22222222
+      .addCase(fetchProjectDetailsAll.pending, (state) => {
+        state.dataloader1 = true;
+      })
+      .addCase(fetchProjectDetailsAll.fulfilled, (state, action) => {
+        state.dataloader1 = false;
+        state.projectsAll = action?.payload;
+      })
+      .addCase(fetchProjectDetailsAll.rejected, (state, action) => {
+        state.dataloader1 = false;
+        state.error = action?.payload;
+      })
+      // search API
+      .addCase(SerachData.pending, (state) => {
+        state.serachLoader = true;
+      })
+      .addCase(SerachData.fulfilled, (state, action) => {
+        state.ApiSearch = action?.payload;
+        state.serachLoader = false;
+      })
+      .addCase(SerachData.rejected, (state, action) => {
+        state.error = action?.payload;
+        state.serachLoader = false;
+      })
+      // assignee search API
+      .addCase(SerachDataAssigne.pending, (state) => {
+        state.vissibleAssignee = false;
+        state.assigneeLoader = true;
+      })
+      .addCase(SerachDataAssigne.fulfilled, (state, action) => {
+        state.vissibleAssignee = true;
+        state.AssigneSearch = action?.payload;
+        state.assigneeLoader = false;
+      })
+      .addCase(SerachDataAssigne.rejected, (state, action) => {
+        state.vissibleAssignee = false;
+        state.error = action?.payload;
+        state.assigneeLoader = false;
+      })
+      //group by filters API
+      .addCase(groupByFilterAction.pending, (state) => {
+        state.filterLoader = true;
+        state.visibleGroupFilter = false;
+      })
+      .addCase(groupByFilterAction.fulfilled, (state, action) => {
+        state.filtersData = action?.payload;
+        state.visibleGroupFilter = true;
+        state.filterLoader = false;
+        //state.assigneeLoader = false;
+      })
+      .addCase(groupByFilterAction.rejected, (state, action) => {
+        state.filterLoader = false;
+        state.visibleGroupFilter = false;
+        state.error = action?.payload;
+        //state.assigneeLoader = false;
+      })
+      //search by project API
+      .addCase(SerachByProjectName.pending, (state) => {
+        //state.filterLoader = true;
+        //state.visibleGroupFilter = false;
+      })
+      .addCase(SerachByProjectName.fulfilled, (state, action) => {
+        state.projectSearchData = action?.payload;
+        console.log(
+          state.projectSearchData,
+          "projectSearchDataprojectSearchData"
+        );
+        //state.visibleGroupFilter = true;
+        // state.filterLoader = false;
+        //state.assigneeLoader = false;
+      })
+      .addCase(SerachByProjectName.rejected, (state, action) => {
+        // state.filterLoader = false;
+        //state.visibleGroupFilter = false;
+        state.error = action?.payload;
+        //state.assigneeLoader = false;
+      });
+  },
+});
+
+export const {
+  setValue,
+  clearSearchValue,
+  getStatusFilter,
+  getSearchDropDownValue,
+} = SearchSlice.actions;
+export default SearchSlice.reducer;

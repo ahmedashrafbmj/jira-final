@@ -1,0 +1,135 @@
+import React from "react";
+import { DashboardTwoTone, LeftCircleOutlined,MailOutlined,IssuesCloseOutlined 
+  ,HomeOutlined,AliwangwangOutlined } from "@ant-design/icons";
+import { Layout, Menu } from "antd";
+import "./sidebar.css"
+import { useNavigate,Link } from "react-router-dom";
+
+const { Sider } = Layout;
+
+function SidebarComponent({ collapsed, onToggleSidebar }) {
+  const Navigate  =useNavigate()
+  
+  const sidebarItems = [
+    {
+      name: "Dashboard",
+      url: "/",
+      icon: HomeOutlined,
+    },
+    // {
+    //   name: "Timeline",
+    //   url: "/about",
+    //   icon: AliwangwangOutlined,
+    // },
+    // {
+    //   name: "Board",
+    //   url: "/mails",
+    //   icon: MailOutlined ,
+    // },
+    // {
+    //   name: "Issues",
+    //   url: "/contact",
+    //   icon: IssuesCloseOutlined  ,
+    // },
+  ];
+  // const navigate = useNavigate();
+
+  // const handleClick = () => {
+  //   navigate(-1);
+  // };
+
+  // const labels = [
+  //   <span
+  //     style={{
+  //       fontWeight: "bold",
+  //       paddingLeft: "1px",
+  //       cursor: "pointer", // Make the span clickable
+  //     }}
+  //   >
+  //     Dashboard
+  //   </span>,
+  // ];
+  // const icons = [DashboardTwoTone];
+
+  // const items2 = icons?.map((icon, index) => {
+  //   const key = `sub${index + 1}`;
+  //   const itemLabel = labels[index];
+
+  //   const item = {
+  //     key,
+  //     icon: React.createElement(icon),
+  //     label: (
+  //       <div key={index} onClick={handleClick}>
+  //         {itemLabel}
+  //       </div>
+  //     ),
+  //   };
+
+  //   return item;
+  // });
+
+  return (
+    <Sider
+      style={{
+        background: "none",
+        position: "fixed",
+        left: "1px",
+        top: "102px",
+        marginTop: "-14px",
+        transition: " all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1)",
+        //width: collapsed ? "80px" : "150px",
+      }}
+      collapsed={collapsed}
+    >
+      <LeftCircleOutlined
+        style={{
+          marginLeft: collapsed ? "69px" : "183px",
+          fontSize: "20px",
+          color: "black",
+          cursor: "pointer",
+          position: "relative",
+          transform: collapsed ? "rotate(180deg)" : "rotate(0)",
+          transition: "transform 0.5s margin-left 0.5s width 0.5s",
+        }}
+        onClick={onToggleSidebar}
+      />
+      <ul className="sidebar_list">
+      {sidebarItems.map(({name, url, icon:Icon}) => 
+      {
+        console.log( url,"name, url")
+        return (
+          <li className="sidebar_item" onClick={()=>Navigate("/")} key={name}>
+            <Link to={"/"}>
+
+              <a className="sidebar_Link" href={url}>
+              {/* <Link
+          className={`sidebar_Link ${window.location.pathname === url ? 'sidebar__link--active' : ''}`}
+          to={url}
+        > */}
+              <span className="sidebar_icon">
+           <Icon/>
+            </span>
+            <a className="" style={{color:"black"}} href={url}>
+
+            {!collapsed && <span className="sidebar_name">    <a className="" style={{color:"black"}} href={url}>{name}</a></span>}
+            </a>
+            {/* <span className="sidebar_name">{name}</span> */}
+          </a>
+            </Link>
+        </li>
+        )
+      }
+      )}
+    </ul> 
+      {/* <Menu
+        mode="inline"
+        defaultSelectedKeys={["1"]}
+        defaultOpenKeys={["sub1"]}
+        items={items2}
+        style={{ width: "146px", marginLeft: "-28px" }}
+      /> */}
+    </Sider>
+  );
+}
+
+export default SidebarComponent;

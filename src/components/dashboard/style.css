@@ -1,0 +1,128 @@
+.ant-layout .ant-layout-sider .sideMenu{
+   background-color: rgb(240, 248, 255);
+   z-index: 5;
+}
+.headerTitle {
+    flex: 1; 
+    align-items: flex-start;
+    font-size: x-large;
+    font-weight: bold;
+    margin-top: "-12px",
+  }
+  .Proprintlogo{
+   display: flex;
+   flex-direction: row;
+   margin-top: 13px;
+  }
+  .proprintLogoText{
+  
+   color: rgb(84, 189, 250);
+   font-size: x-large;
+   font-weight: 700;
+   margin-top: 10px;
+  }
+  .fontClass{
+   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: var(--ds-font-lineHeight-200, 1.42857142857143);
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    text-decoration-skip-ink: auto;
+  }
+  .menuItems{
+   position: relative;
+    display: flex;
+    box-sizing: border-box;
+    /* width: 100%;
+    min-height: 40px; */
+    margin: var(--ds-space-0, 0px);
+    -webkit-box-align: center;
+    align-items: center;
+    border: 0px;
+    font-size: var(--ds-font-size-100, 14px);
+    outline: 0px;
+    text-decoration: none;
+    user-select: none;
+    padding-block: var(--ds-space-100, 8px);
+    padding-inline: var(--ds-space-200, 5px);
+    background-color: var(--ds-background-neutral-subtle, transparent);
+    color: currentcolor;
+    cursor: pointer;
+    &:hover{
+      background-color: rgb(232, 236, 243); 
+    }
+  }
+  /* Hover styles */
+  .hoverEffect {
+    border-color: gray;
+    border-radius: 5px;
+    &:hover {
+        transition: color 0.2s, transform 0.1s, margin-left 0.1s ease-in;
+        background: #4c9aff;
+        border-radius: 50%;
+        border-color: gray;
+     }
+  }
+/* Add this CSS to your stylesheet or in your component style object */
+.custom-search .ant-input:hover::placeholder {
+  color: gray; /* Change this to the color you want on hover */
+}
+.ant-input-search .ant-input-search-button {
+  height: 31px;
+}
+.ant-menu-item .dashboardPadding{
+  padding-left: 1px;
+}
+:where(.css-dev-only-do-not-override-xu9wm8).ant-select-single {
+  font-size: 14px;
+  height: 32px;
+  margin-top: 20px;
+  width: 300px;
+  background-color: white !important;
+}
+:where(.css-xu9wm8).ant-select-single {
+  font-size: 14px;
+  height: 32px;
+  margin-top: 20px;
+  width: 300px;
+}
+
+
+
+.css-1jy569b-MuiFormLabel-root-MuiInputLabel-root {
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-family: "Roboto","Helvetica","Arial",sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 1rem !important;
+  line-height: 1.4375em !important;
+  letter-spacing: 0.00938em !important;
+  padding: 0 !important;
+  position: relative !important;
+  display: block !important;
+  transform-origin: top left!important;
+  white-space: nowrap!important;
+  overflow: hidden!important;
+  text-overflow: ellipsis!important;
+  max-width: calc(133% - 32px)!important;
+  position: absolute!important;
+  left: 0!important;
+  top: 16px!important;
+  -webkit-transform: translate(14px, -9px) scale(0.75)!important;
+  -moz-transform: translate(14px, -9px) scale(0.75)!important;
+  -ms-transform: translate(14px, -9px) scale(0.75)!important;
+  transform: translate(14px, -9px) scale(0.75)!important;
+  -webkit-transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,-webkit-transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms !important;
+  transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms !important;
+  z-index: 1 !important;
+  pointer-events: auto !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root {
+  /* padding-left: 0px !important; */
+  /* padding-right: 0px !important; */
+}
