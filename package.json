@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@atlaskit/avatar-group": "^9.4.6",
+    "@atlaskit/avatar-group": "^9.5.0",
     "@atlaskit/breadcrumbs": "^11.10.7",
     "@atlaskit/ds-lib": "^2.2.3",
     "@atlaskit/icon": "^21.12.8",
